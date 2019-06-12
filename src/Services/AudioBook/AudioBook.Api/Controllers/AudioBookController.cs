@@ -12,16 +12,40 @@ namespace AudioBook.API.Controllers
 {
     [Route("api")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("1.1")]
+
     public class AudioBookController : ControllerBase
     {
-        // GET api/values
         [HttpGet("category/{categoryId}/audiobooks")]
-        [Audit]
-        public async Task<ActionResult<PagedData<AudioBookModel>>> Get()
+        //[Audit]
+        public async Task<ActionResult<PagedData<AudioBookModel>>> Gets(int categoryId, int page = 1)
         {
             var result = new PagedData<AudioBookModel>(new List<AudioBookModel>(), 0);
 
             return this.Ok(result);
+        }
+
+        [HttpGet("audiobooks")]
+        //[Audit]
+        public async Task<ActionResult<PagedData<AudioBookModel>>> Gets([FromQuery] int categoryId = 0)
+        {
+            var result = new PagedData<AudioBookModel>(new List<AudioBookModel>(), 0);
+
+            return this.Ok(result);
+        }
+
+        [HttpGet("audiobooks/{id}")]
+        //[Audit]
+        public async Task<ActionResult<PagedData<AudioBookModel>>> Get(int id)
+        {
+            return this.Ok(id);
+        }
+
+        [HttpPost("audiobooks")]
+        public async Task<IActionResult> Post([FromBody]AudioBookModel model)
+        {
+            return this.Ok(model);
         }
     }
 }

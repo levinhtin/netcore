@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AudioBook.Api.Services;
+using AudioBook.Api.Services.Interfaces;
 using AudioBook.API;
 using AudioBook.API.Providers;
 using AudioBook.Core.Constants;
@@ -80,7 +82,7 @@ namespace AudioBook.Api
 
             //services.AddScoped<IFileProvider, PhysicalFileProvider>();
             //services.AddScoped<IUnitOfWork, DapperUnitOfWork>();
-            //services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             services
                 .AddMvcCore()

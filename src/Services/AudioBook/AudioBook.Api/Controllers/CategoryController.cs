@@ -5,77 +5,78 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using AudioBook.Core.Entities;
 using AudioBook.Infrastructure.Repositories.Interfaces;
+using AudioBook.Api.Services.Interfaces;
+using AudioBook.Core.DTO.Request;
+using AudioBook.Core.DTO.Response;
+using AudioBook.Core.Models;
+using System.Collections.Generic;
 
 namespace AudioBook.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _categoryRepo;
-        private readonly IAudioBookRepository _audioBookRepo;
 
-        public CategoryController(ICategoryRepository categoryRepo, IAudioBookRepository audioBookRepo)
+        private readonly ICategoryService _categoryService;
+
+        public CategoryController(ICategoryService categoryService)
         {
-            this._categoryRepo = categoryRepo;
-            this._audioBookRepo = audioBookRepo;
+            this._categoryService = categoryService;
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("categories/{id}")]
+        public async Task<ActionResult<CategoryDetailResponse>> Get(int id)
+        {
+            var data = await this._categoryService.GetById(id);
+
+            if (data == null)
+            {
+                return this.NoContent();
+            }
+
+            return this.Ok(data);
+        }
+
+        // ToDo: Api get ds category
+        [HttpGet("categories")]
+        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 1, int limit = 10)
+        {
+            var result = new PagedData<CategoryDetailResponse>(new List<CategoryDetailResponse>(), 0);
+            return this.Ok(result);
+        }
+
+
+        [HttpPost("categories")]
+        public async Task<IActionResult> Post([FromBody] CategoryCreateRequest model)
+        {
+
+            if (string.IsNullOrEmpty(model.Name))
+            {
+                var error = new { Message = "Name is required!" };
+
+                return this.BadRequest(error);
+            }
+
+            await this._categoryService.Insert(model);
+
+            return this.Created("api/category", model);
+        }
+
+
+        // ToDo: Api update category
+        // Them DTO update trong body
+        [HttpPut("categories")]
+        public async Task<IActionResult> Put()
         {
             return this.Ok();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post()
+        // ToDo: Api delete category
+        [HttpPut("categories/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-                {
-                    try
-                    {
-                        var category = new Category()
-                        {
-                            Id = 16,
-                            Name = "Test 1",
-                            Description = "Test description",
-                            CreatedAt = DateTime.Now,
-                            CreatedBy = "levinhtin@gmail.com",
-                            ModifiedAt = DateTime.Now,
-                            ModifiedBy = 1
-                        };
-
-                        var audioBook = new AudioBookInfo()
-                        {
-                            Id = 12,
-                            Name = "Hành trình về phương Đông",
-                            ImageBackground = string.Empty,
-                            CreatedAt = DateTime.Now,
-                            CreatedBy = "levinhtin@gmail.com",
-                            ModifiedAt = DateTime.Now,
-                            ModifiedBy = 1
-                        };
-
-                        await this._categoryRepo.InsertAsync(category);
-                        await this._audioBookRepo.InsertAsync(audioBook);
-
-                        scope.Complete();
-                        scope.Dispose();
-                    }
-                    catch
-                    {
-                        scope.Dispose();
-                    }
-
-                    return this.Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
-            }
+            return this.Ok();
         }
     }
 }

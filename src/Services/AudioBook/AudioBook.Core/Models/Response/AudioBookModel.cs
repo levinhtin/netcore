@@ -7,5 +7,6 @@ namespace AudioBook.Core.Models.Response
 {
     public class AudioBookModel
     {
+        public int Id { get; set; }
     }
 }

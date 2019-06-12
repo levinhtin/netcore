@@ -6,6 +6,7 @@ using FluentMigrator;
 
 namespace AudioBook.API.Migrations
 {
+    [Migration(20190612161801)]
     public class AudioBook_Table_Create : Migration
     {
         public override void Up()

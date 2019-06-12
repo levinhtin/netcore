@@ -30,8 +30,4 @@
     <ProjectReference Include="..\AudioBook.Infrastructure\AudioBook.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Interfaces\" />
-  </ItemGroup>
-
 </Project>
