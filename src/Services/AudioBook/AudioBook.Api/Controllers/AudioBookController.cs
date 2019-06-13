@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AudioBook.Api.Criterias;
 using AudioBook.API.Filters;
+using AudioBook.Core.DTO.Query;
 using AudioBook.Core.Models;
 using AudioBook.Core.Models.Response;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +30,7 @@ namespace AudioBook.API.Controllers
 
         [HttpGet("audiobooks")]
         //[Audit]
-        public async Task<ActionResult<PagedData<AudioBookModel>>> Gets([FromQuery] int categoryId = 0)
+        public async Task<ActionResult<PagedData<AudioBookModel>>> Gets([FromQuery] GetAllAudioBookFilter filter)
         {
             var result = new PagedData<AudioBookModel>(new List<AudioBookModel>(), 0);
 
