@@ -5,7 +5,7 @@ using System.Text;
 
 namespace File.Infrastructure.Repositories.Interfaces
 {
-    public interface IFileRepository : IRepository<FileEntity>
+    public interface IFileRepository : IRepository<FileInfo>
     {
     }
 }

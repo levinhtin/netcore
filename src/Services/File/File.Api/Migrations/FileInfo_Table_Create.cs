@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace File.Api.Migrations
 {
     [Migration(20190612090500)]
-    public class File_Table_Create : Migration
+    public class FileInfo_Table_Create : Migration
     {
         public override void Up()
         {
-            Create.Table("File")
-                .WithColumn("Id").AsGuid().PrimaryKey().NotNullable()
+            Create.Table("FileInfo")
+                .WithColumn("Id").AsInt64().PrimaryKey().Identity().NotNullable()
                 .WithColumn("OriginalName").AsString(255).NotNullable()
                 .WithColumn("Type").AsString(100).NotNullable()
                 .WithColumn("Length").AsInt64().NotNullable()
@@ -26,7 +26,7 @@ namespace File.Api.Migrations
 
         public override void Down()
         {
-            Delete.Table("File");
+            Delete.Table("FileInfo");
         }
     }
 }

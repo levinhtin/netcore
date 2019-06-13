@@ -1,4 +1,5 @@
 ﻿using File.Api.Services.Interfaces;
+using File.Core.DTO.Response;
 using File.Core.Entities;
 using File.Core.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -32,56 +33,62 @@ namespace File.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> Post([FromForm]List<IFormFile> files)
         {
-            var moment = DateTime.Now;
-
-            long size = files.Sum(f => f.Length);
-
-            foreach (var file in files)
+            try
             {
-                //var fileValidated = await FileHelpers.ProcessFormFile(file, ModelState);
-            }
+                var moment = DateTime.Now;
 
-            // Perform a second check to catch ProcessFormFile method
-            // violations.
-            if (!ModelState.IsValid)
-            {
-                return this.BadRequest(ModelState);
-            }
+                long size = files.Sum(f => f.Length);
 
-            var data = new List<FileEntity>();
-
-            var tasks = new List<Task<FileEntity>>();
-            foreach (var formFile in files)
-            {
-                if (formFile.Length > 0)
+                foreach (var file in files)
                 {
-                    // full path to file in temp location
-                    var filePath = Path.Combine(_environment.ContentRootPath, @"Uploads", string.Format("{0}_{1}", moment.ToString("yyyyMMdd_hhmm"), Regex.Replace(formFile.FileName, @"\s+", "")));
-
-                    var task = this._fileService.Save(filePath, formFile);
-                    tasks.Add(task);
+                    //var fileValidated = await FileHelpers.ProcessFormFile(file, ModelState);
                 }
-            }
 
-            var saveResult = await Task.WhenAll(tasks);
-
-            foreach (var fileModel in saveResult)
-            {
-                if (fileModel != null)
+                // Perform a second check to catch ProcessFormFile method
+                // violations.
+                if (!ModelState.IsValid)
                 {
-                    data.Add(fileModel);
+                    return this.BadRequest(ModelState);
                 }
+
+                var tasks = new List<Task<FileDetailResponse>>();
+                foreach (var formFile in files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        // full path to file in temp location
+                        var filePath = Path.Combine(@"Uploads", string.Format("{0}_{1}", moment.ToString("yyyyMMdd_hhmmss"), Regex.Replace(formFile.FileName, @"\s+", "")));
+
+                        var task = this._fileService.Save(_environment.ContentRootPath, filePath, formFile);
+                        tasks.Add(task);
+                    }
+                }
+
+                var saveResult = await Task.WhenAll(tasks);
+
+                var data = new List<FileDetailResponse>();
+                foreach (var fileModel in saveResult)
+                {
+                    if (fileModel != null)
+                    {
+                        data.Add(fileModel);
+                    }
+                }
+
+                var result = new AppResult<List<FileDetailResponse>>()
+                {
+                    Message = "Uploaded",
+                    Data = data
+                };
+
+                // process uploaded files
+                // Don't rely on or trust the FileName property without validation.
+                return Ok(result);
             }
-
-            var result = new AppResult<List<FileEntity>>()
+            catch (Exception ex)
             {
-                Message = "Uploaded",
-                Data = data
-            };
-
-            // process uploaded files
-            // Don't rely on or trust the FileName property without validation.
-            return Ok(result);
+                throw ex;
+            }
         }
 
         [HttpGet]

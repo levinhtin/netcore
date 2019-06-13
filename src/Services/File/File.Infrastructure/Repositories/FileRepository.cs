@@ -6,7 +6,7 @@ using System.Text;
 
 namespace File.Infrastructure.Repositories
 {
-    public class FileRepository : Repository<FileEntity>, IFileRepository
+    public class FileRepository : Repository<FileInfo>, IFileRepository
     {
         private readonly string _connectionString;
 

@@ -1,4 +1,5 @@
-﻿using File.Core.Entities;
+﻿using File.Core.DTO.Response;
+using File.Core.Entities;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,6 @@ namespace File.Api.Services.Interfaces
 {
     public interface IFileService
     {
-        Task<FileEntity> Save(string path, IFormFile file);
+        Task<FileDetailResponse> Save(string rootPath, string path, IFormFile file);
     }
 }

@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace File.Core.Entities
+namespace File.Core.DTO.Response
 {
     /// <summary>
     /// File entity
     /// </summary>
-    public class FileEntity
+    public class FileDetailResponse
     {
         /// <summary>
         /// Gets or sets File Id
         /// </summary>
-        public Guid Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// Gets or sets File Name
@@ -38,25 +38,5 @@ namespace File.Core.Entities
         /// Gets or sets Relative path
         /// </summary>
         public string Path { get; set; }
-
-        /// <summary>
-        /// Time created file
-        /// </summary>
-        public DateTime CreatedAt { get; set; }
-
-        /// <summary>
-        /// File created by username
-        /// </summary>
-        public string CreatedBy { get; set; }
-
-        /// <summary>
-        /// File is deleted
-        /// </summary>
-        public bool IsDeleted { get; set; }
-
-        /// <summary>
-        /// File is verified
-        /// </summary>
-        public bool IsVerified { get; set; }
     }
 }
