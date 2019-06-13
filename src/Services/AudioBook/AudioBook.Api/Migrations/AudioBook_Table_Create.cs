@@ -16,9 +16,9 @@ namespace AudioBook.API.Migrations
                 .WithColumn("Name").AsString()
                 .WithColumn("Description").AsString().Nullable()
                 .WithColumn("CreatedAt").AsDateTime()
-                .WithColumn("CreatedBy").AsInt16()
+                .WithColumn("CreatedBy").AsString()
                 .WithColumn("ModifiedAt").AsDateTime().Nullable()
-                .WithColumn("ModifiedBy").AsInt16().Nullable();
+                .WithColumn("ModifiedBy").AsString().Nullable();
 
             Create.Table("Author")
                 .WithColumn("Id").AsInt64().PrimaryKey().Identity()
