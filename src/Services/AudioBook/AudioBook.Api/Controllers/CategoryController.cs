@@ -10,6 +10,7 @@ using AudioBook.Core.DTO.Request;
 using AudioBook.Core.DTO.Response;
 using AudioBook.Core.Models;
 using System.Collections.Generic;
+using Mapster;
 
 namespace AudioBook.API.Controllers
 {
@@ -66,17 +67,32 @@ namespace AudioBook.API.Controllers
 
         // ToDo: Api update category
         // Them DTO update trong body
-        [HttpPut("categories")]
-        public async Task<IActionResult> Put()
+        [HttpPut("categories/{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] CategoryUpdateRequest model)
         {
-            return this.Ok();
+            var data = await this._categoryService.GetById(id);
+            
+            if (data == null)
+            {
+                return BadRequest(new { error = "Data is not exist" });
+            }
+            await this._categoryService.Update(model);
+            return Ok(new { success = "You updated successfully" });
+           
         }
 
         // ToDo: Api delete category
-        [HttpPut("categories/{id}")]
+        [HttpDelete("categories/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            return this.Ok();
+            var data = await this._categoryService.GetById(id);
+            if(data == null)
+            {
+                return NotFound();
+            }
+
+            await this._categoryService.Delete(data.Adapt<Category>());
+            return new ObjectResult(data);
         }
     }
 }
