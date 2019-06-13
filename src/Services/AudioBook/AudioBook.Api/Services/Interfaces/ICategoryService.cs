@@ -13,5 +13,11 @@ namespace AudioBook.Api.Services.Interfaces
         Task<CategoryDetailResponse> GetById(int id);
 
         Task Insert(CategoryCreateRequest entity);
+
+        Task Update(CategoryUpdateRequest entity);
+
+        Task Delete(Category category);
+
+        
     }
 }
