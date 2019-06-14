@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using AudioBook.Core.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace AudioBook.Infrastructure.Repositories.Interfaces
@@ -34,6 +35,7 @@ namespace AudioBook.Infrastructure.Repositories.Interfaces
         /// </summary>
         /// <returns>Trả về TEntity</returns>
         Task<IEnumerable<TEntity>> GetAllAsync();
+
 
         /// <summary>
         /// Insert entity

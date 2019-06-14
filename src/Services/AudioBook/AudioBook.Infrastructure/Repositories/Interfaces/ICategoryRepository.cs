@@ -10,5 +10,13 @@ namespace AudioBook.Infrastructure.Repositories.Interfaces
 {
     public interface ICategoryRepository : IRepository<Category>
     {
+        /// <summary>
+        /// Get all devices paging
+        /// </summary>
+        /// <param name="page">Username to get devices</param>
+        /// <param name="limit">Username to get devices</param>
+        /// <param name="search">Username to get devices</param>
+        /// <returns>A collection of device info</returns>
+        Task<IEnumerable<Category>> GetAllPagingAsync(int page, int limit, string search);
     }
 }

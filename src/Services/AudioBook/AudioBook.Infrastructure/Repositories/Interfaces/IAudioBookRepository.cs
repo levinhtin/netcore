@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AudioBook.Infrastructure.Repositories.Interfaces
 {
-    public interface IAudioBookRepository : IRepository<AudioBookInfo>
+     public interface IAudioBookRepository : IRepository<AudioBookInfo>
     {
     }
 }
