@@ -39,11 +39,12 @@ namespace AudioBook.API.Controllers
             return this.Ok(data);
         }
 
-        // ToDo: Api get ds category
         [HttpGet("categories")]
-        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 1, int limit = 10)
+        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page , int limit  , string search )
         {
-            var result = new PagedData<CategoryDetailResponse>(new List<CategoryDetailResponse>(), 0);
+            var data = await this._categoryService.GetAllPagingAsync(page, limit, search);
+
+            var result = new PagedData<CategoryDetailResponse>(data, 0);
             return this.Ok(result);
         }
 
