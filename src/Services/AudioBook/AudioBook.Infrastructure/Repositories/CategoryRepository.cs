@@ -20,7 +20,7 @@ namespace AudioBook.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// Get all paging
+        /// Get all Category paging
         /// </summary>
         /// <param name="page">Username to get devices</param>
         /// <param name="limit">Username to get devices</param>
@@ -71,7 +71,7 @@ namespace AudioBook.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// Count all
+        /// Count all Category paging
         /// </summary>
         /// <param name="search">Username to get devices</param>
         /// <returns>A collection of device info</returns>
@@ -89,10 +89,10 @@ namespace AudioBook.Infrastructure.Repositories
 
                     var data = await conn.QueryFirstOrDefaultAsync<int>(
                         @"SELECT COUNT(*) FROM Category WHERE Name LIKE N'%@Search%'",
-                        param: new { @Search = search });
+                        param: new {@Search = search });
 
                     conn.Close();
-
+                    
                     return data;
                 }
             }

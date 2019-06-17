@@ -10,11 +10,14 @@ namespace AudioBook.Api.Services.Interfaces
 {
     public interface ICategoryService
     {
+
+        Task<int> CountAllAsync(string search);
+
         Task<IEnumerable<CategoryDetailResponse>> GetAllPagingAsync(int page, int limit, string search);
 
         Task<CategoryDetailResponse> GetById(int id);
 
-        Task Insert(CategoryCreateRequest entity);
+        Task<int> InsertAsync(CategoryCreateRequest dto);
 
         Task Update(CategoryUpdateRequest entity);
 
