@@ -6,9 +6,7 @@ using AudioBook.Infrastructure.Repositories.Interfaces;
 using Mapster;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Transactions;
 
 namespace AudioBook.Api.Services
 {
@@ -26,7 +24,7 @@ namespace AudioBook.Api.Services
             var data = await this._categoryRepo.DeleteAsync(category);
         }
 
-        public async Task<IEnumerable<CategoryDetailResponse>> GetAllPagingAsync(int page = 0, int limit= 10 , string search = "")
+        public async Task<IEnumerable<CategoryDetailResponse>> GetAllPagingAsync(int page = 0, int limit = 10, string search = "")
         {
             var data = await this._categoryRepo.GetAllPagingAsync(page, limit, search);
             var dto = data.Adapt<IEnumerable<CategoryDetailResponse>>();
@@ -50,7 +48,7 @@ namespace AudioBook.Api.Services
             return total;
         }
 
-        public async Task Insert(CategoryCreateRequest dto)
+        public async Task<int> InsertAsync(CategoryCreateRequest dto)
         {
             var entity = new Category()
             {
@@ -60,8 +58,7 @@ namespace AudioBook.Api.Services
                 CreatedBy = "havi"
             };
 
-            var entity2 = dto.Adapt<Category>();
-            await this._categoryRepo.InsertAsync(entity);
+            return await this._categoryRepo.InsertAsync(entity);
         }
 
         public async Task Update(CategoryUpdateRequest dto)

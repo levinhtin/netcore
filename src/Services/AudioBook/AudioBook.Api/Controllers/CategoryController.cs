@@ -39,7 +39,7 @@ namespace AudioBook.API.Controllers
         }
 
         [HttpGet("categories")]
-        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 1, int limit = 10, string search = "")
+        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 0, int limit = 10, string search = "")
         {
             var data = await this._categoryService.GetAllPagingAsync(page, limit, search);
 
@@ -59,18 +59,16 @@ namespace AudioBook.API.Controllers
 
                 return this.BadRequest(error);
             }
-            
-            await this._categoryService.Insert(model);
-         
-            var a = model.Adapt<CategoryDetailResponse>();
 
-            var result = new AppResult<CategoryDetailResponse>()
+            var id = await this._categoryService.InsertAsync(model);
+
+            var result = new AppResult<int>()
             {
-                Message = "update success",
-                Data = a
+                Message = "Insert success",
+                Data = id
             };
 
-            return this.Ok(result);
+            return this.Created("api/categories", result);
         }
 
         // ToDo: Api update category
