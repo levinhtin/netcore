@@ -39,7 +39,7 @@ namespace AudioBook.API.Controllers
         }
 
         [HttpGet("categories")]
-        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 0, int limit = 10, string search = "")
+        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 1, int limit = 10, string search = "")
         {
             var data = await this._categoryService.GetAllPagingAsync(page, limit, search);
 
