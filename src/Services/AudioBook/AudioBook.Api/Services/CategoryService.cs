@@ -68,8 +68,7 @@ namespace AudioBook.Api.Services
             data.Name = dto.Name;
             data.Description = dto.Description;
 
-            // var entity2 = dto.Adapt<Category>();
-            var result = await this._categoryRepo.UpdateAsync(data);
+            await this._categoryRepo.UpdateAsync(data);
         }
     }
 }

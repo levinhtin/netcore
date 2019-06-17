@@ -8,9 +8,12 @@
   <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="3.2.1" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
+    <PackageReference Include="FluentValidation" Version="8.4.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.4.0" />
     <PackageReference Include="IdentityModel" Version="3.10.10" />
     <PackageReference Include="Mapster" Version="4.0.0" />
+    <PackageReference Include="MediatR" Version="7.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="3.2.0" />
@@ -29,6 +32,13 @@
   <ItemGroup>
     <ProjectReference Include="..\AudioBook.Core\AudioBook.Core.csproj" />
     <ProjectReference Include="..\AudioBook.Infrastructure\AudioBook.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Application\Commands\CategoryDelete\" />
+    <Folder Include="Application\Events\" />
+    <Folder Include="Application\Queries\Category\Detail\" />
+    <Folder Include="Application\Queries\Category\Paging\" />
   </ItemGroup>
 
 </Project>

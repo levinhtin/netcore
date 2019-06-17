@@ -10,6 +10,9 @@ using AudioBook.Core.Constants;
 using AudioBook.Infrastructure;
 using AudioBook.Infrastructure.Repositories;
 using AudioBook.Infrastructure.Repositories.Interfaces;
+using FluentValidation.AspNetCore;
+using MediatR;
+using MediatR.Pipeline;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -84,6 +87,12 @@ namespace AudioBook.Api
             //services.AddScoped<IUnitOfWork, DapperUnitOfWork>();
             services.AddScoped<ICategoryService, CategoryService>();
 
+            //Pipeline
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
+            var assembly = AppDomain.CurrentDomain.Load("AudioBook.Api");
+            services.AddMediatR(assembly);
+
             services
                 .AddMvcCore()
                 .AddJsonFormatters()
@@ -94,7 +103,8 @@ namespace AudioBook.Api
                         NamingStrategy = new SnakeCaseNamingStrategy()
                     };
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddFluentValidation(option => option.RegisterValidatorsFromAssembly(assembly));
 
             services
                 .AddApiVersioning(options =>

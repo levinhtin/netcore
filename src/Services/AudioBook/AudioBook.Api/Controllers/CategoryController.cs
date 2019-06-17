@@ -7,6 +7,9 @@ using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using AudioBook.Core.Constants;
+using MediatR;
+using AudioBook.Api.Application.Commands.CategoryCreate;
+using AudioBook.Api.Application.Commands.CategoryUpdate;
 
 namespace AudioBook.API.Controllers
 {
@@ -14,10 +17,12 @@ namespace AudioBook.API.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
+        private readonly IMediator _mediator;
         private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService categoryService)
+        public CategoryController(IMediator mediator, ICategoryService categoryService)
         {
+            this._mediator = mediator;
             this._categoryService = categoryService;
         }
 
@@ -62,17 +67,9 @@ namespace AudioBook.API.Controllers
 
 		// Post categories
         [HttpPost("categories")]
-        public async Task<IActionResult> Post([FromBody] CategoryCreateRequest model)
+        public async Task<IActionResult> Post([FromBody] CreateCategoryCommand request)
         {
-            if (string.IsNullOrEmpty(model.Name))
-            {
-                var error = new { Message = "Name is required!" };
-
-                return this.BadRequest(error);
-            }
-
-            var id = await this._categoryService.InsertAsync(model);
-
+            var id = await this._mediator.Send(request);
             var result = new ApiResult<int>()
             {
                 Message = "Insert success",
@@ -85,16 +82,9 @@ namespace AudioBook.API.Controllers
         // ToDo: Api update category
         // Them DTO update trong body
         [HttpPut("categories/{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] CategoryUpdateRequest model)
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateCategoryCommand request)
         {
-            var data = await this._categoryService.GetById(id);
-
-            if (data == null)
-            {
-                return BadRequest(new { error = "Data is not exist" });
-            }
-
-            await this._categoryService.Update(model);
+            await this._mediator.Send(request);
 
             var result = new ApiResult<CategoryDetailResponse>()
             {
