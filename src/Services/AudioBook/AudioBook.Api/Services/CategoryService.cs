@@ -24,7 +24,7 @@ namespace AudioBook.Api.Services
             var data = await this._categoryRepo.DeleteAsync(category);
         }
 
-        public async Task<IEnumerable<CategoryDetailResponse>> GetAllPagingAsync(int page = 0, int limit = 10, string search = "")
+        public async Task<IEnumerable<CategoryDetailResponse>> GetAllPagingAsync(int page = 1, int limit = 10, string search = "")
         {
             var data = await this._categoryRepo.GetAllPagingAsync(page, limit, search);
             var dto = data.Adapt<IEnumerable<CategoryDetailResponse>>();
