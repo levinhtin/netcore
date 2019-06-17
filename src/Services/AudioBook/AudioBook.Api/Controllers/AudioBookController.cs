@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AudioBook.Api.Criterias;
 using AudioBook.API.Filters;
-using AudioBook.Core.DTO.Query;
 using AudioBook.Core.Models;
 using AudioBook.Core.Models.Response;
 using Microsoft.AspNetCore.Authorization;
