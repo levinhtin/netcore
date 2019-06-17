@@ -26,7 +26,7 @@ namespace AudioBook.Api.Services
             var data = await this._categoryRepo.DeleteAsync(category);
         }
 
-        public async Task<IEnumerable<CategoryDetailResponse>> GetAllPagingAsync(int page, int limit, string search)
+        public async Task<IEnumerable<CategoryDetailResponse>> GetAllPagingAsync(int page = 0, int limit= 10 , string search = "")
         {
             var data = await this._categoryRepo.GetAllPagingAsync(page, limit, search);
             var dto = data.Adapt<IEnumerable<CategoryDetailResponse>>();
@@ -41,6 +41,13 @@ namespace AudioBook.Api.Services
             var dto = entity.Adapt<CategoryDetailResponse>();
 
             return dto;
+        }
+
+        public async Task<int> CountAllAsync(string search)
+        {
+            var total = await this._categoryRepo.CountAllAsync(search);
+
+            return total;
         }
 
         public async Task Insert(CategoryCreateRequest dto)
