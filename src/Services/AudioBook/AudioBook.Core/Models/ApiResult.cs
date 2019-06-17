@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AudioBook.Core.Models
 {
-    public class AppResult<TEntity>
+    public class ApiResult<TEntity>
     {
         /// <summary>
         /// Thông báo

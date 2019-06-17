@@ -6,6 +6,7 @@ using AudioBook.Core.Models;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using AudioBook.Core.Constants;
 
 namespace AudioBook.API.Controllers
 {
@@ -30,25 +31,35 @@ namespace AudioBook.API.Controllers
                 return this.NoContent();
             }
 
-            var result = new AppResult<CategoryDetailResponse>()
+            var result = new ApiResult<CategoryDetailResponse>()
             {
-                Message = "get success",
+                Message = "Get success",
                 Data = data
             };
+
             return this.Ok(result);
         }
 
         [HttpGet("categories")]
         public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 1, int limit = 10, string search = "")
         {
+            if (page <= 0)
+            {
+                return this.BadRequest();
+            }
+
             var data = await this._categoryService.GetAllPagingAsync(page, limit, search);
 
             var total = await this._categoryService.CountAllAsync(search);
-
-            var result = new PagedData<CategoryDetailResponse>(data, total);
+            var result = new ApiResult<PagedData<CategoryDetailResponse>>()
+            {
+                Message = ApiMessage.GetOk,
+                Data = new PagedData<CategoryDetailResponse>(data, total)
+            };
 
             return this.Ok(result);
         }
+
 		// Post categories
         [HttpPost("categories")]
         public async Task<IActionResult> Post([FromBody] CategoryCreateRequest model)
@@ -62,7 +73,7 @@ namespace AudioBook.API.Controllers
 
             var id = await this._categoryService.InsertAsync(model);
 
-            var result = new AppResult<int>()
+            var result = new ApiResult<int>()
             {
                 Message = "Insert success",
                 Data = id
@@ -85,7 +96,7 @@ namespace AudioBook.API.Controllers
 
             await this._categoryService.Update(model);
 
-            var result = new AppResult<CategoryDetailResponse>()
+            var result = new ApiResult<CategoryDetailResponse>()
             {
                 Message = "update success",
                 Data = null
@@ -105,7 +116,8 @@ namespace AudioBook.API.Controllers
             }
 
             await this._categoryService.Delete(data.Adapt<Category>());
-            var result = new AppResult<CategoryDetailResponse>()
+
+            var result = new ApiResult<CategoryDetailResponse>()
             {
                 Message = "success",
                 Data = null
