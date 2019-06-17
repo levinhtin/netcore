@@ -77,12 +77,14 @@ namespace AudioBook.Api
             services.AddSingleton<AuthenticationCfg>(authenticationCfg);
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IAudioBookRepository, AudioBookRepository>();
 
             //services.AddScoped<IFileProvider, PhysicalFileProvider>();
             //services.AddScoped<IUnitOfWork, DapperUnitOfWork>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IAuthorService, AuthorService>();
 
             services
                 .AddMvcCore()
