@@ -11,6 +11,7 @@ using AudioBook.Core.DTO.Response;
 using AudioBook.Core.Models;
 using System.Collections.Generic;
 using Mapster;
+using AudioBook.Core.Constants;
 
 namespace AudioBook.API.Controllers
 {
@@ -36,15 +37,31 @@ namespace AudioBook.API.Controllers
                 return this.NoContent();
             }
 
-            return this.Ok(data);
+            var result = new ApiResult<CategoryDetailResponse>()
+            {
+                Message = "Get success",
+                Data = data
+            };
+
+            return this.Ok(result);
         }
 
         [HttpGet("categories")]
-        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page , int limit  , string search )
+        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 1, int limit = 10, string search = "")
         {
+            if (page <= 0)
+            {
+                return this.BadRequest();
+            }
+
             var data = await this._categoryService.GetAllPagingAsync(page, limit, search);
 
-            var result = new PagedData<CategoryDetailResponse>(data, 0);
+            var result = new ApiResult<PagedData<CategoryDetailResponse>>()
+            {
+                Message = ApiMessage.GetOk,
+                Data = new PagedData<CategoryDetailResponse>(data, 0)
+            };
+
             return this.Ok(result);
         }
 
@@ -77,8 +94,10 @@ namespace AudioBook.API.Controllers
             {
                 return BadRequest(new { error = "Data is not exist" });
             }
+
             await this._categoryService.Update(model);
-            return Ok(new { success = "You updated successfully" });
+
+            return this.Ok(new { success = "You updated successfully" });
            
         }
 
@@ -93,6 +112,7 @@ namespace AudioBook.API.Controllers
             }
 
             await this._categoryService.Delete(data.Adapt<Category>());
+
             return new ObjectResult(data);
         }
     }

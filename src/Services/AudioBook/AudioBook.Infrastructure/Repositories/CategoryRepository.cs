@@ -20,7 +20,7 @@ namespace AudioBook.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// Get all devices paging
+        /// Get all paging
         /// </summary>
         /// <param name="page">Username to get devices</param>
         /// <param name="limit">Username to get devices</param>
@@ -60,6 +60,38 @@ namespace AudioBook.Infrastructure.Repositories
                     {
                         return Enumerable.Empty<Category>();
                     }
+
+                    return data;
+                }
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Count all
+        /// </summary>
+        /// <param name="search">Username to get devices</param>
+        /// <returns>A collection of device info</returns>
+        public async Task<int> CountAllAsync(string search)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(this._connectionString))
+                {
+                    // Open connection
+                    if (conn.State == ConnectionState.Closed)
+                    {
+                        conn.Open();
+                    }
+
+                    var data = await conn.QueryFirstOrDefaultAsync<int>(
+                        @"SELECT COUNT(*) FROM Category WHERE Name LIKE N'%@Search%'",
+                        param: new { @Search = search });
+
+                    conn.Close();
 
                     return data;
                 }
