@@ -1,9 +1,4 @@
-﻿using AudioBook.Core.Events;
-using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using MediatR;
 
 namespace AudioBook.Api.Application.Commands.CategoryUpdate
 {

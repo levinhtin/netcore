@@ -22,6 +22,7 @@ namespace AudioBook.Api.Application.Queries.CategoryPaging
         public async Task<PagedData<CategoryPagingDTO>> Handle(CategoryPagingQuery request, CancellationToken cancellationToken)
         {
             var data = await this._categoryRepo.GetAllPagingAsync(request.Page, request.Limit, request.Search);
+
             var dataDTO = data.Adapt<IEnumerable<CategoryPagingDTO>>();
 
             var total = await this._categoryRepo.CountAllAsync(request.Search);
