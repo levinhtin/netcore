@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AudioBook.Core.Entities
+﻿namespace AudioBook.Core.Entities
 {
     public class AppRole
     {

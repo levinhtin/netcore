@@ -1,4 +1,5 @@
 ﻿using AudioBook.Api.Services.Interfaces;
+using AudioBook.Core.Constants;
 using AudioBook.Core.DTO.Request;
 using AudioBook.Core.DTO.Response;
 using AudioBook.Core.Entities;
@@ -6,10 +7,12 @@ using AudioBook.Core.Models;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using AudioBook.Core.Constants;
 using MediatR;
 using AudioBook.Api.Application.Commands.CategoryCreate;
 using AudioBook.Api.Application.Commands.CategoryUpdate;
+using AudioBook.Api.Application.Queries.CategoryDetail;
+using AudioBook.Api.Application.Queries.CategoryPaging;
+using AudioBook.Api.Application.Commands.CategoryDelete;
 
 namespace AudioBook.API.Controllers
 {
@@ -18,27 +21,25 @@ namespace AudioBook.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly ICategoryService _categoryService;
 
-        public CategoryController(IMediator mediator, ICategoryService categoryService)
+        public CategoryController(IMediator mediator)
         {
             this._mediator = mediator;
-            this._categoryService = categoryService;
         }
 
         [HttpGet("categories/{id}")]
-        public async Task<ActionResult<CategoryDetailResponse>> Get(int id)
+        public async Task<ActionResult<CategoryDetailDTO>> Get(int id)
         {
-            var data = await this._categoryService.GetById(id);
+            var data = await this._mediator.Send(new CategoryDetailQuery() { Id = id });
 
             if (data == null)
             {
                 return this.NoContent();
             }
 
-            var result = new ApiResult<CategoryDetailResponse>()
+            var result = new ApiResult<CategoryDetailDTO>()
             {
-                Message = "Get success",
+                Message = ApiMessage.GetOk,
                 Data = data
             };
 
@@ -46,71 +47,61 @@ namespace AudioBook.API.Controllers
         }
 
         [HttpGet("categories")]
-        public async Task<ActionResult<PagedData<CategoryDetailResponse>>> Gets(int page = 1, int limit = 10, string search = "")
+        public async Task<ActionResult<PagedData<CategoryPagingDTO>>> Gets([FromQuery] CategoryPagingQuery query)
         {
-            if (page <= 0)
+            if (query.Page <= 0)
             {
                 return this.BadRequest();
             }
 
-            var data = await this._categoryService.GetAllPagingAsync(page, limit, search);
+            var data = await this._mediator.Send(query);
 
-            var total = await this._categoryService.CountAllAsync(search);
-            var result = new ApiResult<PagedData<CategoryDetailResponse>>()
+            var result = new ApiResult<PagedData<CategoryPagingDTO>>()
             {
                 Message = ApiMessage.GetOk,
-                Data = new PagedData<CategoryDetailResponse>(data, total)
+                Data = data
             };
 
             return this.Ok(result);
         }
 
-		// Post categories
+        // Post categories
         [HttpPost("categories")]
         public async Task<IActionResult> Post([FromBody] CreateCategoryCommand request)
         {
             var id = await this._mediator.Send(request);
             var result = new ApiResult<int>()
             {
-                Message = "Insert success",
+                Message = ApiMessage.CreateOk,
                 Data = id
             };
 
             return this.Created("api/categories", result);
         }
 
-        // ToDo: Api update category
-        // Them DTO update trong body
         [HttpPut("categories/{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateCategoryCommand request)
         {
-            await this._mediator.Send(request);
+            var data = await this._mediator.Send(request);
 
-            var result = new ApiResult<CategoryDetailResponse>()
+            var result = new ApiResult<bool>()
             {
-                Message = "update success",
-                Data = null
+                Message = ApiMessage.UpdateOk,
+                Data = data
             };
 
             return Ok(result);
         }
 
-        // ToDo: Api delete category
         [HttpDelete("categories/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var data = await this._categoryService.GetById(id);
-            if (data == null)
-            {
-                return NotFound();
-            }
+            var data = await this._mediator.Send(new DeleteCategoryCommand() { Id = id });
 
-            await this._categoryService.Delete(data.Adapt<Category>());
-
-            var result = new ApiResult<CategoryDetailResponse>()
+            var result = new ApiResult<bool>()
             {
-                Message = "success",
-                Data = null
+                Message = ApiMessage.DeleteOk,
+                Data = data
             };
 
             return Ok(result);

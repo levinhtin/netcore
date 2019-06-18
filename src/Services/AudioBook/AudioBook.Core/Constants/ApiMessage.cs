@@ -6,6 +6,9 @@ namespace AudioBook.Core.Constants
 {
     public class ApiMessage
     {
-        public static string GetOk = "Get success";
+        public const string GetOk = "Get success";
+        public const string DeleteOk = "Delete success";
+        public const string UpdateOk = "Update success";
+        public const string CreateOk = "Create success";
     }
 }
