@@ -50,6 +50,7 @@ namespace AudioBook.API.Controllers
             var data = await this._authorService.GetAllPagingAsync(page, limit, search);
 
             var total = await this._authorService.CountAllAsync(search);
+
             var result = new ApiResult<PagedData<AuthorDetailResponse>>()
             {
                 Message = "",
