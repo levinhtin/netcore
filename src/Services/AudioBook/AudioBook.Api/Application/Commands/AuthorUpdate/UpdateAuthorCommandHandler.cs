@@ -1,8 +1,5 @@
 ﻿using AudioBook.Infrastructure.Repositories.Interfaces;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +20,6 @@ namespace AudioBook.Api.Application.Commands.AuthorUpdate
 
             data.Name = request.Name;
             data.Description = request.Description;
-            data.DateOfBirth = request.DateOfBirth;
 
             return await this._authorRepo.UpdateAsync(data);
         }

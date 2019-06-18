@@ -74,7 +74,7 @@ namespace AudioBook.API.Controllers
             return this.Created("api/authors", result);
         }
 
-        [HttpPut("author/{id}")]
+        [HttpPut("authors/{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateAuthorCommand request)
         {
             var data = await this._mediator.Send(request);
