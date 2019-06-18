@@ -1,4 +1,5 @@
 ﻿using AudioBook.Api.Services.Interfaces;
+using AudioBook.Core.Constants;
 using AudioBook.Core.DTO.Request;
 using AudioBook.Core.DTO.Response;
 using AudioBook.Core.Entities;
@@ -6,7 +7,6 @@ using AudioBook.Core.Models;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using AudioBook.Core.Constants;
 
 namespace AudioBook.API.Controllers
 {
@@ -60,7 +60,7 @@ namespace AudioBook.API.Controllers
             return this.Ok(result);
         }
 
-		// Post categories
+        // Post categories
         [HttpPost("categories")]
         public async Task<IActionResult> Post([FromBody] CategoryCreateRequest model)
         {

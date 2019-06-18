@@ -1,5 +1,4 @@
 ﻿using AudioBook.Core.Entities;
-using AudioBook.Infrastructure;
 using AudioBook.Infrastructure.Repositories.Interfaces;
 using Dapper;
 using System.Collections.Generic;
@@ -89,10 +88,10 @@ namespace AudioBook.Infrastructure.Repositories
 
                     var data = await conn.QueryFirstOrDefaultAsync<int>(
                         @"SELECT COUNT(*) FROM Category WHERE Name LIKE N'%@Search%'",
-                        param: new {@Search = search });
+                        param: new { @Search = search });
 
                     conn.Close();
-                    
+
                     return data;
                 }
             }
