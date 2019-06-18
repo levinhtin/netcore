@@ -1,18 +1,13 @@
-﻿using AudioBook.Api.Services.Interfaces;
-using AudioBook.Core.Constants;
-using AudioBook.Core.DTO.Request;
-using AudioBook.Core.DTO.Response;
-using AudioBook.Core.Entities;
-using AudioBook.Core.Models;
-using Mapster;
-using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
-using MediatR;
-using AudioBook.Api.Application.Commands.CategoryCreate;
+﻿using AudioBook.Api.Application.Commands.CategoryCreate;
+using AudioBook.Api.Application.Commands.CategoryDelete;
 using AudioBook.Api.Application.Commands.CategoryUpdate;
 using AudioBook.Api.Application.Queries.CategoryDetail;
 using AudioBook.Api.Application.Queries.CategoryPaging;
-using AudioBook.Api.Application.Commands.CategoryDelete;
+using AudioBook.Core.Constants;
+using AudioBook.Core.Models;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace AudioBook.API.Controllers
 {

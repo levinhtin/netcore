@@ -1,9 +1,11 @@
-﻿using AudioBook.Api.Services.Interfaces;
-using AudioBook.Core.DTO.Request;
-using AudioBook.Core.DTO.Response;
-using AudioBook.Core.Entities;
+﻿using AudioBook.Api.Application.Commands.AuthorCreate;
+using AudioBook.Api.Application.Commands.AuthorDelete;
+using AudioBook.Api.Application.Commands.AuthorUpdate;
+using AudioBook.Api.Application.Queries.AuthorDetail;
+using AudioBook.Api.Application.Queries.AuthorPaging;
+using AudioBook.Core.Constants;
 using AudioBook.Core.Models;
-using Mapster;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -13,24 +15,24 @@ namespace AudioBook.API.Controllers
     [ApiController]
     public class AuthorController : ControllerBase
     {
-        private readonly IAuthorService _authorService;
+        private readonly IMediator _mediator;
 
-        public AuthorController(IAuthorService authorService)
+        public AuthorController(IMediator mediator)
         {
-            this._authorService = authorService;
+            this._mediator = mediator;
         }
 
         [HttpGet("authors/{id}")]
-        public async Task<ActionResult<AuthorDetailResponse>> Get(int id)
+        public async Task<ActionResult<AuthorDetailDTO>> Get(int id)
         {
-            var data = await this._authorService.GetById(id);
+            var data = await this._mediator.Send(new AuthorDetailQuery() { Id = id });
 
             if (data == null)
             {
                 return this.NoContent();
             }
-
-            var result = new ApiResult<AuthorDetailResponse>()
+            
+            var result = new ApiResult<AuthorDetailDTO>()
             {
                 Message = "Get success",
                 Data = data
@@ -40,37 +42,28 @@ namespace AudioBook.API.Controllers
         }
 
         [HttpGet("authors")]
-        public async Task<ActionResult<PagedData<AuthorDetailResponse>>> Gets(int page = 1, int limit = 10, string search = "")
+        public async Task<ActionResult<PagedData<AuthorPagingDTO>>> Gets([FromQuery] AuthorPagingQuery query)
         {
-            if (page <= 0)
+            if (query.Page <= 0)
             {
                 return this.BadRequest();
             }
 
-            var data = await this._authorService.GetAllPagingAsync(page, limit, search);
+            var data = await this._mediator.Send(query);
 
-            var total = await this._authorService.CountAllAsync(search);
-
-            var result = new ApiResult<PagedData<AuthorDetailResponse>>()
+            var result = new ApiResult<PagedData<AuthorPagingDTO>>()
             {
-                Message = "",
-                Data = new PagedData<AuthorDetailResponse>(data, total)
+                Message = ApiMessage.GetOk,
+                Data = data
             };
 
             return this.Ok(result);
         }
 
         [HttpPost("authors")]
-        public async Task<IActionResult> Post([FromBody] AuthorCreateRequest model)
+        public async Task<IActionResult> Post([FromBody] CreateAuthorCommand request)
         {
-            if (string.IsNullOrEmpty(model.Name))
-            {
-                var error = new { Message = "Name is required!" };
-
-                return this.BadRequest(error);
-            }
-
-            var id = await this._authorService.InsertAsync(model);
+            var id = await this._mediator.Send(request);
 
             var result = new ApiResult<int>()
             {
@@ -81,22 +74,15 @@ namespace AudioBook.API.Controllers
             return this.Created("api/authors", result);
         }
 
-        [HttpPut("authors/{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] AuthorUpdateRequest model)
+        [HttpPut("author/{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateAuthorCommand request)
         {
-            var data = await this._authorService.GetById(id);
+            var data = await this._mediator.Send(request);
 
-            if (data == null)
+            var result = new ApiResult<bool>()
             {
-                return BadRequest(new { error = "Data is not exist" });
-            }
-
-            await this._authorService.Update(model);
-
-            var result = new ApiResult<AuthorDetailResponse>()
-            {
-                Message = "update success",
-                Data = null
+                Message = ApiMessage.UpdateOk,
+                Data = data
             };
 
             return Ok(result);
@@ -105,18 +91,12 @@ namespace AudioBook.API.Controllers
         [HttpDelete("authors/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var data = await this._authorService.GetById(id);
-            if (data == null)
-            {
-                return NotFound();
-            }
+            var data = await this._mediator.Send(new DeleteAuthorCommand() { Id = id });
 
-            await this._authorService.Delete(data.Adapt<Author>());
-
-            var result = new ApiResult<AuthorDetailResponse>()
+            var result = new ApiResult<bool>()
             {
-                Message = "success",
-                Data = null
+                Message = "Delete Success",
+                Data = data
             };
 
             return Ok(result);
