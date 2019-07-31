@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace AudioBook.Api.Criterias
+namespace AudioBook.Api.Criteria
 {
-    public class GetAllAudioBookFilter
+    public class GetAllAudioBookCriteria
     {
         [FromQuery(Name = "page")]
         public int Page { get; set; } = 1;

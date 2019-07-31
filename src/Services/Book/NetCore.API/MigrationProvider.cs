@@ -24,7 +24,7 @@ namespace NetCore.API
 
         /// <summary>
         /// Configure the dependency injection services
-        /// </sumamry>
+        /// </summary>
         private static IServiceProvider CreateServices(string connectionString)
         {
             return new ServiceCollection()
@@ -45,7 +45,7 @@ namespace NetCore.API
 
         /// <summary>
         /// Update the database
-        /// </sumamry>
+        /// </summary>
         private static void UpdateDatabase(IServiceProvider serviceProvider)
         {
             // Instantiate the runner
