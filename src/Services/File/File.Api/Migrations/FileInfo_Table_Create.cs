@@ -11,22 +11,31 @@ namespace File.Api.Migrations
     {
         public override void Up()
         {
-            Create.Table("FileInfo")
-                .WithColumn("Id").AsInt64().PrimaryKey().Identity().NotNullable()
-                .WithColumn("OriginalName").AsString(255).NotNullable()
-                .WithColumn("Type").AsString(100).NotNullable()
-                .WithColumn("Length").AsInt64().NotNullable()
+            Create.Table("AppFile")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable()
+                .WithColumn("Name").AsString(255).NotNullable()
+                .WithColumn("AppType").AsString(100).NotNullable()
+                .WithColumn("Length").AsInt32().NotNullable()
                 .WithColumn("Extension").AsString(10).NotNullable()
                 .WithColumn("Path").AsString(2000).NotNullable()
                 .WithColumn("IsDeleted").AsBoolean().NotNullable()
-                .WithColumn("IsVerified").AsBoolean().NotNullable()
+                .WithColumn("IsActive").AsBoolean().NotNullable()
                 .WithColumn("CreatedAt").AsDateTime().NotNullable()
-                .WithColumn("CreatedBy").AsString(50).NotNullable();
+                .WithColumn("CreatedBy").AsString().NotNullable();
+
+            Create.Table("AppFileExtendProp")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().NotNullable()
+                .WithColumn("AppFileId").AsInt32().ForeignKey("AppFile", "Id")
+                .WithColumn("PropName").AsString(100).NotNullable()
+                .WithColumn("PropValue").AsString(500).NotNullable()
+                .WithColumn("CreatedAt").AsDateTime().NotNullable()
+                .WithColumn("CreatedBy").AsString().NotNullable();
         }
 
         public override void Down()
         {
-            Delete.Table("FileInfo");
+            Delete.Table("AppFileExtendProp");
+            Delete.Table("AppFile");
         }
     }
 }

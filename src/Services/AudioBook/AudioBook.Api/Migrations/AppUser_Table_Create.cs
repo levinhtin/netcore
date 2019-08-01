@@ -12,16 +12,36 @@ namespace AudioBook.API.Migrations
         public override void Up()
         {
             Create.Table("AppUser")
-                .WithColumn("Id").AsInt64().PrimaryKey().Identity()
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Username").AsString()
                 .WithColumn("Email").AsString()
                 .WithColumn("FirstName").AsString()
                 .WithColumn("LastName").AsString()
                 .WithColumn("DateOfBirth").AsDate().Nullable()
+                .WithColumn("IsActive").AsBoolean().NotNullable()
                 .WithColumn("CreatedAt").AsDateTime()
-                .WithColumn("CreatedBy").AsInt64()
+                .WithColumn("CreatedBy").AsString()
                 .WithColumn("ModifiedAt").AsDateTime().Nullable()
-                .WithColumn("ModifiedBy").AsInt64().Nullable();
+                .WithColumn("ModifiedBy").AsString().Nullable();
+
+            Create.Table("AppRole")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("Name").AsString()
+                .WithColumn("IsActive").AsBoolean().NotNullable()
+                .WithColumn("CreatedAt").AsDateTime()
+                .WithColumn("CreatedBy").AsString()
+                .WithColumn("ModifiedAt").AsDateTime().Nullable()
+                .WithColumn("ModifiedBy").AsString().Nullable();
+
+            Create.Table("AppUserRole")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
+                .WithColumn("AppUserId").AsInt32().ForeignKey("AppUser", "Id")
+                .WithColumn("AppRoleId").AsInt32().ForeignKey("AppRole", "Id")
+                .WithColumn("IsActive").AsBoolean().NotNullable()
+                .WithColumn("CreatedAt").AsDateTime()
+                .WithColumn("CreatedBy").AsString()
+                .WithColumn("ModifiedAt").AsDateTime().Nullable()
+                .WithColumn("ModifiedBy").AsString().Nullable();
         }
 
         public override void Down()
