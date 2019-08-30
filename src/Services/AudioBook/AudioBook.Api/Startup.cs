@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AudioBook.Api.Services;
-using AudioBook.Api.Services.Interfaces;
+using System.Security.Claims;
 using AudioBook.API;
 using AudioBook.API.Providers;
 using AudioBook.Core.Constants;
@@ -15,15 +11,13 @@ using MediatR;
 using MediatR.Pipeline;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -83,11 +77,19 @@ namespace AudioBook.Api
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IAudioBookRepository, AudioBookRepository>();
+            services.AddScoped<IBookReaderRepository, BookReaderRepository>();
 
             //services.AddScoped<IFileProvider, PhysicalFileProvider>();
             //services.AddScoped<IUnitOfWork, DapperUnitOfWork>();
-            services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IAuthorService, AuthorService>();
+            //services.AddScoped<ICategoryService, CategoryService>();
+            //services.AddScoped<IAuthorService, AuthorService>();
+
+            services.AddTransient<ClaimsPrincipal>(x =>
+            {
+                var currentContext = x.GetService<IHttpContextAccessor>();
+                return currentContext.HttpContext.User;
+            });
+            services.AddHttpContextAccessor();
 
             //Pipeline
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));

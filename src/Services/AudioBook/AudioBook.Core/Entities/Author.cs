@@ -4,9 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AudioBook.Core.Entities
 {
-    [Table("Author")]
+    [Table("Authors")]
     public class Author : BaseEntity
     {
+        public Author(string name, string description, DateTime? dateOfBirth)
+        {
+            this.Name = name;
+            this.Description = description;
+            this.DateOfBirth = dateOfBirth;
+        }
+
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }

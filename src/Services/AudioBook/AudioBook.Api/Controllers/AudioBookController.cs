@@ -20,19 +20,9 @@ namespace AudioBook.API.Controllers
 
     public class AudioBookController : ControllerBase
     {
-        [HttpGet("category/{categoryId}/audiobooks")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[Audit]
-        [AddHeader("version", "1.1")]
-        public async Task<ActionResult<PagedData<AudioBookModel>>> Gets(int categoryId, int page = 1)
-        {
-            var result = new PagedData<AudioBookModel>(new List<AudioBookModel>(), 0);
-
-            return this.Ok(result);
-        }
-
         [HttpGet("audiobooks")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         //[Audit]
         [AddHeader("version", "1.0")]
         public async Task<ActionResult<PagedData<AudioBookModel>>> Gets([FromQuery] GetAllAudioBookCriteria filter)
@@ -41,6 +31,7 @@ namespace AudioBook.API.Controllers
 
             return this.Ok(result);
         }
+        
 
         [HttpGet("audiobooks/{id}")]
         //[Audit]

@@ -40,4 +40,47 @@ namespace AudioBook.API.Providers
             return -1;
         }
     }
+
+    public static class ClaimsPrincipalExtensions
+    {
+        /// <summary>
+        /// Get current Id
+        /// </summary>
+        /// <param name="principal"></param>
+        /// <returns></returns>
+        public static int GetUserId(this ClaimsPrincipal principal)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
+            return Convert.ToInt16(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        }
+
+        /// <summary>
+        /// Get current Username
+        /// </summary>
+        /// <param name="principal"></param>
+        /// <returns></returns>
+        public static string GetUsername(this ClaimsPrincipal principal)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
+            return principal.FindFirst(ClaimTypes.Name)?.Value;
+        }
+
+
+        /// <summary>
+        /// Get current Email
+        /// </summary>
+        /// <param name="principal"></param>
+        /// <returns></returns>
+        public static string GetEmail(this ClaimsPrincipal principal)
+        {
+            if (principal == null)
+                throw new ArgumentNullException(nameof(principal));
+
+            return principal.FindFirst(ClaimTypes.Email)?.Value;
+        }
+    }
 }

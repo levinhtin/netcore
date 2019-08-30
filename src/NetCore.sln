@@ -50,6 +50,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioBook.Core", "Services\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudioBook.Infrastructure", "Services\AudioBook\AudioBook.Infrastructure\AudioBook.Infrastructure.csproj", "{A14F9DAF-95ED-4128-BA48-3A9C23464418}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identity", "Services\Identity\Identity.csproj", "{752F2AB5-2D32-4629-BAEE-92F86A886865}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -112,6 +114,10 @@ Global
 		{A14F9DAF-95ED-4128-BA48-3A9C23464418}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A14F9DAF-95ED-4128-BA48-3A9C23464418}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A14F9DAF-95ED-4128-BA48-3A9C23464418}.Release|Any CPU.Build.0 = Release|Any CPU
+		{752F2AB5-2D32-4629-BAEE-92F86A886865}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{752F2AB5-2D32-4629-BAEE-92F86A886865}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{752F2AB5-2D32-4629-BAEE-92F86A886865}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{752F2AB5-2D32-4629-BAEE-92F86A886865}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -135,6 +141,7 @@ Global
 		{21B0141D-7127-4C99-BDB9-4A6DF8998A29} = {153EBBB9-74BA-4048-8805-9ADBE437B348}
 		{1D952A22-02ED-44C5-8D6F-081B65D17A97} = {153EBBB9-74BA-4048-8805-9ADBE437B348}
 		{A14F9DAF-95ED-4128-BA48-3A9C23464418} = {153EBBB9-74BA-4048-8805-9ADBE437B348}
+		{752F2AB5-2D32-4629-BAEE-92F86A886865} = {8E79B5C1-025A-4946-8C92-979A5BEE6563}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {81AB63E5-56C4-4830-A055-9C341115E323}

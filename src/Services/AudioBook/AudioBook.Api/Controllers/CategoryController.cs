@@ -1,20 +1,16 @@
-﻿using AudioBook.Api.Services.Interfaces;
-using AudioBook.Core.Constants;
-using AudioBook.Core.DTO.Request;
-using AudioBook.Core.DTO.Response;
-using AudioBook.Core.Entities;
+﻿using AudioBook.Core.Constants;
 using AudioBook.Core.Models;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using MediatR;
-using AudioBook.Api.Application.Commands.CategoryCreate;
-using AudioBook.Api.Application.Commands.CategoryUpdate;
-using AudioBook.Api.Application.Queries.CategoryDetail;
-using AudioBook.Api.Application.Queries.CategoryPaging;
-using AudioBook.Api.Application.Commands.CategoryDelete;
 using Microsoft.AspNetCore.Http;
 using AudioBook.Api.Filters;
+using AudioBook.Api.Application.Queries.CategoryQueries.Detail;
+using AudioBook.Api.Application.Queries.CategoryQueries.Paging;
+using AudioBook.Api.Application.Commands.CategoryCommands.Update;
+using AudioBook.Api.Application.Commands.CategoryCommands.Delete;
+using AudioBook.Api.Application.Commands.CategoryCommands.Create;
 
 namespace AudioBook.API.Controllers
 {
@@ -35,7 +31,7 @@ namespace AudioBook.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         //[Audit]
         [AddHeader("version", "1.0")]
-        public async Task<ActionResult<CategoryDetailDTO>> Get(int id)
+        public async Task<ActionResult<CategoryDetailDto>> Get(int id)
         {
             var data = await this._mediator.Send(new CategoryDetailQuery() { Id = id });
 
@@ -44,7 +40,7 @@ namespace AudioBook.API.Controllers
                 return this.NoContent();
             }
 
-            var result = new ApiResult<CategoryDetailDTO>()
+            var result = new ApiResult<CategoryDetailDto>()
             {
                 Message = ApiMessage.GetOk,
                 Data = data
@@ -56,7 +52,9 @@ namespace AudioBook.API.Controllers
         [HttpGet("categories")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<PagedData<CategoryPagingDTO>>> Gets([FromQuery] CategoryPagingQuery query)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesDefaultResponseType]
+        public async Task<ActionResult<PagedData<CategoryPagingDto>>> Gets([FromQuery] CategoryPagingQuery query)
         {
             if (query.Page <= 0)
             {
@@ -65,7 +63,7 @@ namespace AudioBook.API.Controllers
 
             var data = await this._mediator.Send(query);
 
-            var result = new ApiResult<PagedData<CategoryPagingDTO>>()
+            var result = new ApiResult<PagedData<CategoryPagingDto>>()
             {
                 Message = ApiMessage.GetOk,
                 Data = data

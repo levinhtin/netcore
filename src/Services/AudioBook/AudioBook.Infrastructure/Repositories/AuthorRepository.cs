@@ -21,9 +21,9 @@ namespace AudioBook.Infrastructure.Repositories
         /// <summary>
         /// Count all Author paging
         /// </summary>
-        /// <param name="search">Username to get Author</param>
+        /// <param name="term">Username to get Author</param>
         /// <returns>A collection of Author info</returns>
-        public async Task<int> CountAllAsync(string search)
+        public async Task<int> CountAllAsync(string term)
         {
             try
             {
@@ -36,8 +36,8 @@ namespace AudioBook.Infrastructure.Repositories
                     }
 
                     var data = await conn.QueryFirstOrDefaultAsync<int>(
-                        @"SELECT COUNT(*) FROM Author WHERE Name LIKE N'%@Search%'",
-                        param: new { @Search = search });
+                        @"SELECT COUNT(*) FROM Authors WHERE Name LIKE N'%@Term%'",
+                        param: new { @Term = term });
 
                     conn.Close();
 
@@ -55,9 +55,9 @@ namespace AudioBook.Infrastructure.Repositories
         /// </summary>
         /// <param name="page">Username to get Author</param>
         /// <param name="limit">Username to get Author</param>
-        /// <param name="search">Username to get Author</param>
+        /// <param name="term">Username to get Author</param>
         /// <returns>A collection of Author info</returns>
-        public async Task<IEnumerable<Author>> GetAllPagingAsync(int page, int limit, string search)
+        public async Task<IEnumerable<Author>> GetAllPagingAsync(int page, int limit, string term)
         {
             try
             {
@@ -82,8 +82,8 @@ namespace AudioBook.Infrastructure.Repositories
                     var offset = (page - 1) * limit;
 
                     var data = await conn.QueryAsync<Author>(
-                        @"SELECT * FROM Author WHERE Name LIKE N'%@Search%' ORDER BY CreatedAt OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY",
-                        param: new { Offset = offset, @Limit = limit, @Search = search });
+                        @"SELECT * FROM Authors WHERE Name LIKE N'%@Term%' ORDER BY CreatedAt OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY",
+                        param: new { Offset = offset, @Limit = limit, @Term = term });
 
                     conn.Close();
 

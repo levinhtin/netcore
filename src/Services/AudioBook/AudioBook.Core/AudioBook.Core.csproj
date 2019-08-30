@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Request\" />
+    <Compile Remove="Models\Request\**" />
+    <EmbeddedResource Remove="Models\Request\**" />
+    <None Remove="Models\Request\**" />
   </ItemGroup>
 
   <ItemGroup>
