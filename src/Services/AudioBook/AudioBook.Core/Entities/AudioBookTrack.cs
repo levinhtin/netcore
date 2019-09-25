@@ -16,6 +16,6 @@ namespace AudioBook.Core.Entities
         public string PathFile { get; set; }
         public int Duration { get; set; }
         public int AudioBookId { get; set; }
-        public int ReaderId { get; set; }
+        public int? ReaderId { get; set; }
     }
 }

@@ -39,7 +39,7 @@ namespace AudioBook.API.Migrations
                 .WithColumn("ModifiedAt").AsDateTime().Nullable()
                 .WithColumn("ModifiedBy").AsString().Nullable();
 
-            Create.Table("AudioBook")
+            Create.Table("AudioBookInfo")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Name").AsString()
                 .WithColumn("Description").AsString().Nullable()
@@ -47,7 +47,7 @@ namespace AudioBook.API.Migrations
                 .WithColumn("Views").AsInt32()
                 .WithColumn("Rate").AsInt32()
                 .WithColumn("Duration").AsInt32()
-                .WithColumn("IsActive").AsBoolean()
+                .WithColumn("IsActive").AsBoolean().WithDefaultValue(0)
                 .WithColumn("CreatedAt").AsDateTime()
                 .WithColumn("CreatedBy").AsString()
                 .WithColumn("ModifiedAt").AsDateTime().Nullable()
@@ -59,9 +59,9 @@ namespace AudioBook.API.Migrations
                 .WithColumn("Description").AsString().Nullable()
                 .WithColumn("PathFile").AsString()
                 .WithColumn("Duration").AsInt32()
-                .WithColumn("AudioBookId").AsInt32().ForeignKey("AudioBook", "Id")
-                .WithColumn("ReaderId").AsInt32().ForeignKey("Reader", "Id")
-                .WithColumn("IsActive").AsBoolean()
+                .WithColumn("AudioBookId").AsInt32().ForeignKey("AudioBookInfo", "Id")
+                .WithColumn("ReaderId").AsInt32().ForeignKey("Reader", "Id").Nullable()
+                .WithColumn("IsActive").AsBoolean().WithDefaultValue(0)
                 .WithColumn("CreatedAt").AsDateTime()
                 .WithColumn("CreatedBy").AsString()
                 .WithColumn("ModifiedAt").AsDateTime().Nullable()
@@ -69,14 +69,14 @@ namespace AudioBook.API.Migrations
 
             Create.Table("AudioBook_Categories")
                 .WithColumn("CategoryId").AsInt32().ForeignKey("Category", "Id")
-                .WithColumn("AudioBookId").AsInt32().ForeignKey("AudioBook", "Id")
+                .WithColumn("AudioBookId").AsInt32().ForeignKey("AudioBookInfo", "Id")
                 .WithColumn("CreatedAt").AsDateTime()
                 .WithColumn("CreatedBy").AsString()
                 .WithColumn("ModifiedAt").AsDateTime().Nullable()
                 .WithColumn("ModifiedBy").AsString().Nullable();
 
             Create.Table("AudioBook_Authors")
-                .WithColumn("AudioBookId").AsInt32().ForeignKey("AudioBook", "Id")
+                .WithColumn("AudioBookId").AsInt32().ForeignKey("AudioBookInfo", "Id")
                 .WithColumn("AuthorId").AsInt32().ForeignKey("Author", "Id")
                 .WithColumn("CreatedAt").AsDateTime()
                 .WithColumn("CreatedBy").AsString()
@@ -84,19 +84,30 @@ namespace AudioBook.API.Migrations
                 .WithColumn("ModifiedBy").AsString().Nullable();
 
             Create.Table("AudioBook_Readers")
-                .WithColumn("AudioBookId").AsInt32().ForeignKey("AudioBook", "Id")
+                .WithColumn("AudioBookId").AsInt32().ForeignKey("AudioBookInfo", "Id")
                 .WithColumn("ReaderId").AsInt32().ForeignKey("Reader", "Id")
                 .WithColumn("CreatedAt").AsDateTime()
                 .WithColumn("CreatedBy").AsString()
                 .WithColumn("ModifiedAt").AsDateTime().Nullable()
                 .WithColumn("ModifiedBy").AsString().Nullable();
+
+            // Seed Data
+            #region Category
+            Insert.IntoTable("Category").Row(new { Name = "Kinh tế", CreatedAt = DateTime.Now, CreatedBy = "Migrator" });
+            Insert.IntoTable("Category").Row(new { Name = "Văn học", CreatedAt = DateTime.Now, CreatedBy = "Migrator" });
+            Insert.IntoTable("Category").Row(new { Name = "Tôn giáo", CreatedAt = DateTime.Now, CreatedBy = "Migrator" });
+            Insert.IntoTable("Category").Row(new { Name = "Chính trị", CreatedAt = DateTime.Now, CreatedBy = "Migrator" });
+            Insert.IntoTable("Category").Row(new { Name = "Lịch sử", CreatedAt = DateTime.Now, CreatedBy = "Migrator" });
+            Insert.IntoTable("Category").Row(new { Name = "Khoa học", CreatedAt = DateTime.Now, CreatedBy = "Migrator" });
+            Insert.IntoTable("Category").Row(new { Name = "Giải trí", CreatedAt = DateTime.Now, CreatedBy = "Migrator" });
+            #endregion
         }
 
         public override void Down()
         {
             Delete.Table("AudioBook_Categories");
             Delete.Table("AudioBookTrack");
-            Delete.Table("AudioBook");
+            Delete.Table("AudioBookInfo");
             Delete.Table("Reader");
             Delete.Table("Author");
             Delete.Table("Category");

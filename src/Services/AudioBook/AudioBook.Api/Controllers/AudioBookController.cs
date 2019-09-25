@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AudioBook.Api.Application.Commands.AudioBookCommands.Create;
 using AudioBook.Api.Application.Queries.ẠudioBookQueries.Detail;
 using AudioBook.Api.Application.Queries.ẠudioBookQueries.Paging;
 using AudioBook.Api.Criteria;
@@ -73,9 +74,11 @@ namespace AudioBook.API.Controllers
         [HttpPost("audiobooks")]
         [ProducesResponseType(typeof(AudioBookModel), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Post([FromBody]AudioBookModel model)
+        public async Task<IActionResult> Post([FromBody]CreateAudioBookCommand command)
         {
-            return this.Ok(model);
+            var result = await this.Mediator.Send(command);
+
+            return this.Created("audiobooks", result);
         }
     }
 }

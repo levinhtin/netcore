@@ -1,4 +1,5 @@
-﻿using AudioBook.Api.Configs.Swagger;
+﻿using AudioBook.Api.Configs.Mediator;
+using AudioBook.Api.Configs.Swagger;
 using AudioBook.Api.Providers;
 using AudioBook.API;
 using AudioBook.API.Providers;
@@ -79,12 +80,8 @@ namespace AudioBook.Api
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IAudioBookRepository, AudioBookRepository>();
+            services.AddScoped<IAudioBookTrackRepository, AudioBookTrackRepository>();
             services.AddScoped<IBookReaderRepository, BookReaderRepository>();
-
-            //services.AddScoped<IFileProvider, PhysicalFileProvider>();
-            //services.AddScoped<IUnitOfWork, DapperUnitOfWork>();
-            //services.AddScoped<ICategoryService, CategoryService>();
-            //services.AddScoped<IAuthorService, AuthorService>();
 
             services.AddTransient<ClaimsPrincipal>(x =>
             {
@@ -93,7 +90,8 @@ namespace AudioBook.Api
             });
             services.AddHttpContextAccessor();
 
-            //Pipeline
+            // Mediator
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(CommandGenericPipelineBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
             var assembly = AppDomain.CurrentDomain.Load("AudioBook.Api");
