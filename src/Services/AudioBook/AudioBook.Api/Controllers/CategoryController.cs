@@ -11,6 +11,7 @@ using AudioBook.Api.Application.Queries.CategoryQueries.Paging;
 using AudioBook.Api.Application.Commands.CategoryCommands.Update;
 using AudioBook.Api.Application.Commands.CategoryCommands.Delete;
 using AudioBook.Api.Application.Commands.CategoryCommands.Create;
+using System;
 
 namespace AudioBook.API.Controllers
 {
@@ -31,22 +32,29 @@ namespace AudioBook.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         //[Audit]
         [AddHeader("version", "1.0")]
-        public async Task<ActionResult<CategoryDetailDto>> Get(int id)
+        public async Task<ActionResult<CategoryDetailDto>> Get([FromRoute]int id)
         {
-            var data = await this._mediator.Send(new CategoryDetailQuery() { Id = id });
-
-            if (data == null)
+            try
             {
-                return this.NoContent();
+                var data = await this._mediator.Send(new CategoryDetailQuery(id));
+
+                if (data == null)
+                {
+                    return this.NoContent();
+                }
+
+                var result = new ApiResult<CategoryDetailDto>()
+                {
+                    Message = ApiMessage.GetOk,
+                    Data = data
+                };
+
+                return this.Ok(result);
             }
-
-            var result = new ApiResult<CategoryDetailDto>()
+            catch (Exception e)
             {
-                Message = ApiMessage.GetOk,
-                Data = data
-            };
-
-            return this.Ok(result);
+                throw e;
+            }
         }
 
         [HttpGet("categories")]
@@ -56,20 +64,27 @@ namespace AudioBook.API.Controllers
         [ProducesDefaultResponseType]
         public async Task<ActionResult<PagedData<CategoryPagingDto>>> Gets([FromQuery] CategoryPagingQuery query)
         {
-            if (query.Page <= 0)
+            try
             {
-                return this.BadRequest();
+                if (query.Page <= 0)
+                {
+                    return this.BadRequest();
+                }
+
+                var data = await this._mediator.Send(query);
+
+                var result = new ApiResult<PagedData<CategoryPagingDto>>()
+                {
+                    Message = ApiMessage.GetOk,
+                    Data = data
+                };
+
+                return this.Ok(result);
             }
-
-            var data = await this._mediator.Send(query);
-
-            var result = new ApiResult<PagedData<CategoryPagingDto>>()
+            catch (Exception e)
             {
-                Message = ApiMessage.GetOk,
-                Data = data
-            };
-
-            return this.Ok(result);
+                throw e;
+            }
         }
 
         // Post categories
@@ -78,14 +93,21 @@ namespace AudioBook.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Post([FromBody] CreateCategoryCommand request)
         {
-            var id = await this._mediator.Send(request);
-            var result = new ApiResult<int>()
+            try
             {
-                Message = ApiMessage.CreateOk,
-                Data = id
-            };
+                var id = await this._mediator.Send(request);
+                var result = new ApiResult<int>()
+                {
+                    Message = ApiMessage.CreateOk,
+                    Data = id
+                };
 
-            return this.Created("api/categories", result);
+                return this.Created("api/categories", result);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         [HttpPut("categories/{id}")]
@@ -93,15 +115,22 @@ namespace AudioBook.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Put(int id, [FromBody] UpdateCategoryCommand request)
         {
-            var data = await this._mediator.Send(request);
-
-            var result = new ApiResult<bool>()
+            try
             {
-                Message = ApiMessage.UpdateOk,
-                Data = data
-            };
+                var data = await this._mediator.Send(request);
 
-            return Ok(result);
+                var result = new ApiResult<bool>()
+                {
+                    Message = ApiMessage.UpdateOk,
+                    Data = data
+                };
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         [HttpDelete("categories/{id}")]
@@ -109,15 +138,22 @@ namespace AudioBook.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete(int id)
         {
-            var data = await this._mediator.Send(new DeleteCategoryCommand() { Id = id });
-
-            var result = new ApiResult<int>()
+            try
             {
-                Message = ApiMessage.DeleteOk,
-                Data = id
-            };
+                var data = await this._mediator.Send(new DeleteCategoryCommand(id));
 
-            return Ok(result);
+                var result = new ApiResult<int>()
+                {
+                    Message = ApiMessage.DeleteOk,
+                    Data = id
+                };
+
+                return Ok(result);
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
         }
     }
 }

@@ -9,5 +9,10 @@ namespace AudioBook.Api.Application.Commands.CategoryCommands.Delete
     public class DeleteCategoryCommand : IRequest<bool>
     {
         public int Id { get; set; }
+
+        public DeleteCategoryCommand(int id)
+        {
+            this.Id = id;
+        }
     }
 }

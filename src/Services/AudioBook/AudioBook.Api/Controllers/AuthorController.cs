@@ -1,16 +1,12 @@
 ﻿using AudioBook.Api.Application.Commands.AuthorCommands.Create;
+using AudioBook.Api.Application.Commands.AuthorCommands.Delete;
 using AudioBook.Api.Application.Commands.AuthorCommands.Update;
-using AudioBook.Core.Entities;
-using AudioBook.Core.Models;
-using Mapster;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using AudioBook.Api.Application.Queries.AuthorQueries.Detail;
 using AudioBook.Api.Application.Queries.AuthorQueries.Paging;
-using AudioBook.Api.Application.Commands.AuthorCommands.Delete;
+using AudioBook.Core.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace AudioBook.API.Controllers
 {
@@ -49,7 +45,7 @@ namespace AudioBook.API.Controllers
 
             var result = new ApiResult<PagedData<AuthorPagingDto>>()
             {
-                Message = "",
+                Message = "Get success",
                 Data = data
             };
 

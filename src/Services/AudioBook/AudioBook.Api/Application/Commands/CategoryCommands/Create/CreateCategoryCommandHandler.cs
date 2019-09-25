@@ -31,9 +31,9 @@ namespace AudioBook.Api.Application.Commands.CategoryCommands.Create
 
                 return await this._categoryRepo.InsertAsync(entity);
             }
-            catch (Exception e)
+            catch
             {
-                throw e;
+                throw;
             }
         }
     }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Security.Claims;
+﻿using AudioBook.Api.Configs.Swagger;
+using AudioBook.Api.Providers;
 using AudioBook.API;
 using AudioBook.API.Providers;
 using AudioBook.Core.Constants;
@@ -20,6 +20,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Security.Claims;
 
 namespace AudioBook.Api
 {
@@ -162,6 +164,7 @@ namespace AudioBook.Api
 
                     //options.OperationFilter<AuthorizationHeaderOperationFilter>();
                     options.DocumentFilter<SwaggerSecurityRequirementsDocumentFilter>();
+                    options.OperationFilter<FileOperation>();
                 });
         }
 
@@ -171,7 +174,8 @@ namespace AudioBook.Api
             if (env.IsDevelopment() || /*Customize*/ env.IsTest())
             {
                 //app.UseDeveloperExceptionPage();
-                app.UseStatusCodePages();
+                //app.UseStatusCodePages();
+                app.UseAppExceptionHandler();
             }
             else
             {

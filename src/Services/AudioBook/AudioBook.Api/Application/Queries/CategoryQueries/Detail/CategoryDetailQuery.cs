@@ -9,5 +9,10 @@ namespace AudioBook.Api.Application.Queries.CategoryQueries.Detail
     public class CategoryDetailQuery : IRequest<CategoryDetailDto>
     {
         public int Id { get; set; }
+
+        public CategoryDetailQuery(int id)
+        {
+            this.Id = id;
+        }
     }
 }

@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <Folder Include="Application\Events\" />
+    <Folder Include="Application\Queries\AudioBookTrackQueries\" />
   </ItemGroup>
 
 </Project>
