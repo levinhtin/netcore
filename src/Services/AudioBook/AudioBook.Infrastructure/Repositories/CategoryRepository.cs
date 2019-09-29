@@ -36,8 +36,10 @@ namespace AudioBook.Infrastructure.Repositories
 
                 if (limit < 0)
                 {
-                    limit = 0;
+                    limit = 10;
                 }
+
+
 
                 using (SqlConnection conn = new SqlConnection(this._connectionString))
                 {
@@ -50,8 +52,8 @@ namespace AudioBook.Infrastructure.Repositories
                     var offset = (page - 1) * limit;
 
                     var data = await conn.QueryAsync<Category>(
-                        @"SELECT * FROM Category WHERE Name LIKE N'%@Search%' ORDER BY CreatedAt OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY",
-                        param: new { Offset = offset, @Limit = limit, @Search = search });
+                        @"SELECT * FROM Category ORDER BY CreatedAt OFFSET @Offset ROWS FETCH NEXT @Limit ROWS ONLY",
+                        param: new { Offset = offset, @Limit = limit });
 
                     conn.Close();
 

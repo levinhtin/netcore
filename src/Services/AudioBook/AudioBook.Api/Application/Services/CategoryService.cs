@@ -50,7 +50,7 @@ namespace AudioBook.Api.Application.Services
 
         public async Task<int> InsertAsync(CategoryCreateRequest dto)
         {
-            var entity = new Category(dto.Name, dto.Description);
+            var entity = new Category() { Name = dto.Name, Description = dto.Description };
 
             return await this._categoryRepo.InsertAsync(entity);
         }

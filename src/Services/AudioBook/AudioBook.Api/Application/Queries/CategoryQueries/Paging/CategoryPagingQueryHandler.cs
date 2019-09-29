@@ -1,12 +1,11 @@
-﻿using AudioBook.Core.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using AudioBook.Core.Models;
 using AudioBook.Infrastructure.Repositories.Interfaces;
 using Mapster;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace AudioBook.Api.Application.Queries.CategoryQueries.Paging
 {

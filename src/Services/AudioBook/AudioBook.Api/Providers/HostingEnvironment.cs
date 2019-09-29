@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
 
 namespace AudioBook.API.Providers
 {
@@ -10,7 +7,7 @@ namespace AudioBook.API.Providers
     {
         public const string TestEnvironment = "Test";
 
-        public static bool IsTest(this IHostingEnvironment hostingEnvironment)
+        public static bool IsTest(this IHostEnvironment hostingEnvironment)
         {
             return hostingEnvironment.IsEnvironment(TestEnvironment);
         }

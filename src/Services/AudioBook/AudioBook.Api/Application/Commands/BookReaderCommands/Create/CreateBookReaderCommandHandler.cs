@@ -1,4 +1,4 @@
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using AudioBook.Core.Entities;
 using AudioBook.Infrastructure.Repositories;
@@ -8,11 +8,9 @@ namespace AudioBook.Api.Application.Commands.BookReaderCommands.Create
 {
     public class CreateBookReaderCommandHandler : IRequestHandler<CreateBookReaderCommand, int>
     {
-        private readonly BookReaderRepository _bookReaderRepo;
 
-        public CreateBookReaderCommandHandler(BookReaderRepository bookReaderRepo)
+        public CreateBookReaderCommandHandler()
         {
-            this._bookReaderRepo = bookReaderRepo;
         }
         
         public async Task<int> Handle(CreateBookReaderCommand request, CancellationToken cancellationToken)

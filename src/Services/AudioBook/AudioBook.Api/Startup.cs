@@ -1,4 +1,7 @@
-﻿using AudioBook.Api.Configs.Mediator;
+﻿using System;
+using System.Security.Claims;
+using System.Text.Json;
+using AudioBook.Api.Configs.Mediator;
 using AudioBook.Api.Configs.Swagger;
 using AudioBook.Api.Providers;
 using AudioBook.API;
@@ -19,45 +22,42 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Security.Claims;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace AudioBook.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
             MigrationProvider.Register(Configuration.GetSection("ConnectionStrings:DbContext").Value);
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddOptions();
+
             // Add Cors service.
-            services.AddCors(options => options
-                .AddPolicy("CorsPolicy", p => p
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                )
-            );
+            services.AddCors(options =>
+            {
+                options
+                    .AddPolicy("CorsPolicy", p => p
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                    );
+            });
 
             services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
-
-            //var builder = services.AddIdentityServer()
-            //    //.AddSigningCredential(cert)
-            //    .AddDeveloperSigningCredential()
-            //    .AddInMemoryClients(Config.GetClients())
-            //    .AddInMemoryIdentityResources(Config.GetIdentityResources())
-            //    .AddInMemoryApiResources(Config.GetApiResources())
-            //    .AddProfileService<IdentityProfileService>()
-            //    .AddResourceOwnerValidator<IdentityResourceOwnerPasswordValidator>();
+            services.AddRouting(options => options.LowercaseUrls = true);
 
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
             services.Configure<AppConnections>(Configuration.GetSection("ConnectionStrings"));
@@ -76,6 +76,13 @@ namespace AudioBook.Api
             Configuration.Bind("Authentication", authenticationCfg);
             services.AddSingleton<AuthenticationCfg>(authenticationCfg);
 
+            services.AddHttpContextAccessor();
+            services.AddTransient<ClaimsPrincipal>(x =>
+            {
+                IHttpContextAccessor currentContext = x.GetService<IHttpContextAccessor>();
+                return currentContext.HttpContext.User;
+            });
+
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IAuthorRepository, AuthorRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -83,32 +90,52 @@ namespace AudioBook.Api
             services.AddScoped<IAudioBookTrackRepository, AudioBookTrackRepository>();
             services.AddScoped<IBookReaderRepository, BookReaderRepository>();
 
-            services.AddTransient<ClaimsPrincipal>(x =>
-            {
-                var currentContext = x.GetService<IHttpContextAccessor>();
-                return currentContext.HttpContext.User;
-            });
-            services.AddHttpContextAccessor();
-
             // Mediator
-            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(CommandGenericPipelineBehavior<,>));
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(CommonPipelineBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
-            var assembly = AppDomain.CurrentDomain.Load("AudioBook.Api");
+            System.Reflection.Assembly assembly = AppDomain.CurrentDomain.Load("AudioBook.Api");
             services.AddMediatR(assembly);
 
             services
-                .AddMvcCore()
-                .AddJsonFormatters()
-                .AddJsonOptions(option =>
+                .AddControllers(options =>
                 {
-                    option.SerializerSettings.ContractResolver = new DefaultContractResolver
-                    {
-                        NamingStrategy = new SnakeCaseNamingStrategy()
-                    };
+                    options.RespectBrowserAcceptHeader = true; // false by default
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddFluentValidation(option => option.RegisterValidatorsFromAssembly(assembly));
+                .AddJsonOptions(options =>
+                {
+                    // Use the default property (Pascal) casing.
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                    options.JsonSerializerOptions.AllowTrailingCommas = true;
+                    //options.JsonSerializerOptions.IgnoreNullValues = true;
+                    // Configure a custom converter.
+                    //options.SerializerOptions.Converters.Add(new MyCustomJsonConverter());
+                })
+                //.AddJsonFormatters()
+                //.AddJsonOptions(option =>
+                //{
+                //    option.SerializerSettings.ContractResolver = new DefaultContractResolver
+                //    {
+                //        NamingStrategy = new SnakeCaseNamingStrategy()
+                //    };
+                //})
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddFluentValidation(option => 
+                { 
+                    option.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                    option.RegisterValidatorsFromAssembly(assembly);
+                });
+
+            // Customise default API behaviour
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressConsumesConstraintForFormFileParameters = true;
+                options.SuppressInferBindingSourcesForParameters = true;
+                options.SuppressModelStateInvalidFilter = true;
+                options.SuppressMapClientErrors = true;
+                options.ClientErrorMapping[404].Link =
+                    "https://httpstatuses.com/404";
+            });
 
             services
                 .AddApiVersioning(options =>
@@ -118,9 +145,16 @@ namespace AudioBook.Api
                     options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
                     options.ReportApiVersions = true;
                 })
-                .AddVersionedApiExplorer(options => { options.GroupNameFormat = "'v'VVV"; });
+                .AddVersionedApiExplorer(options =>
+                {
+                    // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+                    // note: the specified format code will format the version as "'v'major[.minor][-status]"
+                    options.GroupNameFormat = "'v'VVV";
 
-            services.AddMvc();
+                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+                    // can also be used to control the format of the API version in route templates
+                    options.SubstituteApiVersionInUrl = true;
+                });
 
             //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
             ////.AddJwtBearer(o =>
@@ -138,36 +172,17 @@ namespace AudioBook.Api
             //});
 
             // Register the Swagger generator, defining one or more Swagger documents
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen(
                 options =>
                 {
-                    var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
-
-                    foreach (var description in provider.ApiVersionDescriptions)
-                    {
-                        options.SwaggerDoc(
-                            description.GroupName,
-                            new Info()
-                            {
-                                Title = $"AudioBook API {description.ApiVersion}",
-                                Version = description.ApiVersion.ToString()
-                            });
-                    }
-
-                    options.AddSecurityDefinition("Bearer", new ApiKeyScheme()
-                    {
-                        Name = "Authorization",
-                        In = "header"
-                    });
-
-                    //options.OperationFilter<AuthorizationHeaderOperationFilter>();
-                    options.DocumentFilter<SwaggerSecurityRequirementsDocumentFilter>();
-                    options.OperationFilter<FileOperation>();
+                    // add a custom operation filter which sets default values
+                    options.OperationFilter<SwaggerDefaultValues>();
                 });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment() || /*Customize*/ env.IsTest())
             {
@@ -194,7 +209,7 @@ namespace AudioBook.Api
             app.UseSwaggerUI(
                 options =>
                 {
-                    foreach (var description in provider.ApiVersionDescriptions)
+                    foreach (ApiVersionDescription description in provider.ApiVersionDescriptions)
                     {
                         options.SwaggerEndpoint(
                             $"/swagger/{description.GroupName}/swagger.json",
@@ -205,12 +220,19 @@ namespace AudioBook.Api
                     //options.OAuthClientSecret("audiobookapp.secret");
                 });
 
-            //app.UseIdentityServer();
-            //app.UseAuthentication();
 
-            //app.UseHttpsRedirection();
+            app.UseRouting();
+            app.UseCors("CorsPolicy");
+            app.UseHttpsRedirection();
             app.UseWelcomePage(new WelcomePageOptions() { Path = "/" });
-            app.UseMvc();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }

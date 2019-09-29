@@ -1,24 +1,23 @@
-﻿using AudioBook.Core.Constants;
-using AudioBook.Core.Models;
-using Mapster;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-using AudioBook.Api.Filters;
+using AudioBook.Api.Application.Commands.CategoryCommands.Create;
+using AudioBook.Api.Application.Commands.CategoryCommands.Delete;
+using AudioBook.Api.Application.Commands.CategoryCommands.Update;
 using AudioBook.Api.Application.Queries.CategoryQueries.Detail;
 using AudioBook.Api.Application.Queries.CategoryQueries.Paging;
-using AudioBook.Api.Application.Commands.CategoryCommands.Update;
-using AudioBook.Api.Application.Commands.CategoryCommands.Delete;
-using AudioBook.Api.Application.Commands.CategoryCommands.Create;
-using System;
+using AudioBook.Api.Filters;
+using AudioBook.Core.Constants;
+using AudioBook.Core.Models;
+using MediatR;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AudioBook.API.Controllers
 {
     [Route("api")]
     [ApiController]
     [ApiVersion("1.0")]
-    public class CategoryController : ControllerBase
+    public class CategoryController : AppBaseController
     {
         private readonly IMediator _mediator;
 
@@ -71,7 +70,7 @@ namespace AudioBook.API.Controllers
                     return this.BadRequest();
                 }
 
-                var data = await this._mediator.Send(query);
+                var data = await this.Mediator.Send(query);
 
                 var result = new ApiResult<PagedData<CategoryPagingDto>>()
                 {
@@ -95,7 +94,7 @@ namespace AudioBook.API.Controllers
         {
             try
             {
-                var id = await this._mediator.Send(request);
+                var id = await this.Mediator.Send(request);
                 var result = new ApiResult<int>()
                 {
                     Message = ApiMessage.CreateOk,
@@ -125,7 +124,7 @@ namespace AudioBook.API.Controllers
                     Data = data
                 };
 
-                return Ok(result);
+                return this.Ok(result);
             }
             catch (Exception e)
             {
@@ -148,7 +147,7 @@ namespace AudioBook.API.Controllers
                     Data = id
                 };
 
-                return Ok(result);
+                return this.Ok(result);
             }
             catch(Exception e)
             {

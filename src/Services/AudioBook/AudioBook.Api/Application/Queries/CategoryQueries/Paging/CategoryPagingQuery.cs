@@ -1,14 +1,10 @@
 ﻿using AudioBook.Core.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AudioBook.Api.Application.Queries.CategoryQueries.Paging
 {
-    public class CategoryPagingQuery : IRequest<PagedData<CategoryPagingDto>>
+    public class CategoryPagingQuery : RequestAudit, IRequest<PagedData<CategoryPagingDto>>
     {
         [FromQuery(Name = "search")]
         public string Search { get; set; }

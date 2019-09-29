@@ -1,12 +1,9 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using MediatR;
 
 namespace AudioBook.Api.Application.Commands.AudioBookCommands.Create
 {
-    public class CreateAudioBookCommand : ICommand, IRequest<int>
+    public class CreateAudioBookCommand : RequestAudit, IRequest<int>
     {
         public string Name { get; set; }
         public string Description { get; set; }

@@ -24,7 +24,7 @@ namespace AudioBook.Api.Application.Commands.CategoryCommands.Create
         {
             try
             {
-                var entity = new Category(request.Name, request.Description);
+                var entity = new Category() { Name = request.Name, Description = request.Description };
 
                 entity.CreatedAt = DateTime.UtcNow;
                 entity.CreatedBy = this._user.GetUsername();

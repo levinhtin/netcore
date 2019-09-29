@@ -14,8 +14,8 @@ namespace AudioBook.Api.Application.Commands.AudioBookCommands.Create
 
         public CreateAudioBookCommandHandler(IAudioBookRepository audioBookRepository, IAudioBookTrackRepository audioBookTrackRepository)
         {
-            _audioBookRepository = audioBookRepository;
-            _audioBookTrackRepository = audioBookTrackRepository;
+            this._audioBookRepository = audioBookRepository;
+            this._audioBookTrackRepository = audioBookTrackRepository;
         }
 
         public async Task<int> Handle(CreateAudioBookCommand request, CancellationToken cancellationToken)
@@ -38,7 +38,7 @@ namespace AudioBook.Api.Application.Commands.AudioBookCommands.Create
                             CreatedBy = request.RequestBy
                         };
 
-                        var id = await _audioBookRepository.InsertAsync(audioBook);
+                        var id = await this._audioBookRepository.InsertAsync(audioBook);
 
                         foreach (var track in request.Tracks)
                         {
@@ -53,7 +53,7 @@ namespace AudioBook.Api.Application.Commands.AudioBookCommands.Create
                                 CreatedBy = request.RequestBy
                             };
 
-                            await _audioBookTrackRepository.InsertAsync(audioBookTrack);
+                            await this._audioBookTrackRepository.InsertAsync(audioBookTrack);
                         }
 
                         scope.Complete();
